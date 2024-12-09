@@ -8,7 +8,7 @@ def menu_buscar_cidades():
         print("2 - Buscar cidade por codigo IBGE.")
         print("3 - Buscar cidade por nome")
         print("4 - Voltar.")
-        opcao = input("Escolha uma opção (1-4): ")
+        opcao = util.pedir_string("Escolha uma opção (1-4): ")
         if opcao == '1':
             banco.buscar_todas_cidades()
         elif opcao == '2':
@@ -30,7 +30,7 @@ def menu_buscar_empresas():
         print("2 - Buscar empresa por CNPJ.")
         print("3 - Buscar empresa por nome.")
         print("4 - Voltar.")
-        opcao = input("Escolha uma opção (1-4): ")
+        opcao = util.pedir_string("Escolha uma opção (1-4): ")
         if opcao == '1':
             banco.buscar_todas_empresas() #OK
         elif opcao == '2':
@@ -52,7 +52,7 @@ def menu_buscar_grupos_economicos():
         print("2 - Buscar Grupo Economico por id.")
         print("3 - Buscar Grupo Economico por nome")
         print("4 - Voltar.")
-        opcao = input("Escolha uma opção (1-4): ")
+        opcao = util.pedir_string("Escolha uma opção (1-4): ")
         if opcao == '1':
             banco.buscar_todos_grupos_economicos()
         elif opcao == '2':
@@ -75,8 +75,13 @@ def menu_buscar_operacoes():
         print("3 - Buscar Operacao por cidade - Codigo IBGE.")
         print("4 - Buscar Operacoes por empresa - CNPJ")
         print("5 - Buscar relacao entre empresa e cidade")
-        print("6 - Voltar para o menu principal.")
-        opcao = input("Escolha uma opção (1-6): ")
+        print("6 - Velocidade maiores que 50 - Cidade")
+        print("7 - Velocidade maiores que 50 - Empresa")
+        print("8 - Velocidade menores que 50 - Cidade")
+        print("9 - Velocidade menores que 50 - Empresa")
+        print("10 - Voltar para o menu principal.")
+
+        opcao = util.pedir_string("Escolha uma opção (1-10): ")
         if opcao == '1':
             banco.buscar_todas_operacoes()
         elif opcao == '2':
@@ -93,6 +98,18 @@ def menu_buscar_operacoes():
             cnpj = util.pedir_cnpj("Digite o CNPJ da empresa:")
             banco.buscar_operacoes_cidade_empresa_id(codigo_ibge, cnpj)
         elif opcao == '6':
+            codigo_ibge = util.pedir_num("Digite o codigo IBGE:")
+            banco.velocidade_maior_50_cidade(codigo_ibge)
+        elif opcao == '7':
+            cnpj = util.pedir_cnpj("Digite o CNPJ da empresa:")
+            banco.velocidade_maior_50_empresa(cnpj)
+        elif opcao == '8':
+            codigo_ibge = util.pedir_num("Digite o codigo IBGE:")
+            banco.velocidade_menor_50_cidade(codigo_ibge)
+        elif opcao == '9':
+            cnpj = util.pedir_cnpj("Digite o CNPJ da empresa:")
+            banco.velocidade_menor_50_empresa(cnpj)
+        elif opcao == '10':
             break
         else:
             print("Opção inválida. Por favor, escolha uma opção entre 1 e 4.")
@@ -107,7 +124,7 @@ def menu():
         print("3 - Grupos Economicos.")
         print("4 - Operacoes.")
         print("5 - Voltar.")
-        opcao = input("Escolha uma opção (1-5): ")
+        opcao = util.pedir_string("Escolha uma opção (1-5): ")
         if opcao == '1':
             menu_buscar_cidades() # OK
         elif opcao == '2':
@@ -119,5 +136,5 @@ def menu():
         elif opcao == '5':
             break
         else:
-            print("Opção inválida. Por favor, escolha uma opção entre 1 e 4.")
+            print("Opção inválida. Por favor, escolha uma opção entre 1 e 5.")
             continue

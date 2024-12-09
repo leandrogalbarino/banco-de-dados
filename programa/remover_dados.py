@@ -10,7 +10,7 @@ def menu():
         print("4 - Remover Operacao.")
         print("5 - Voltar para o menu principal.")
         
-        opcao = input("Escolha uma opção (1-5): ")
+        opcao = util.pedir_string("Escolha uma opção (1-5): ")
 
         if opcao == '1':
             codigo_ibge = util.pedir_num("Digite o codigo IBGE da cidade:")
@@ -27,5 +27,5 @@ def menu():
         elif opcao == '5':
             break
         else:
-            print("Opção inválida. Por favor, escolha uma opção entre 1 e 4.")
+            print("Opção inválida. Por favor, escolha uma opção entre 1 e 5.")
             continue

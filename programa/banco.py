@@ -1,6 +1,6 @@
 import mysql.connector
-from decimal import Decimal
- 
+
+
 
 # Conectar ao banco de dados MySQL
 conn = mysql.connector.connect(
@@ -95,9 +95,7 @@ def inserir_empresa(cnpj, nome, porte, grupos_economicos_id):
         if resultado['COUNT(*)'] > 0:
             print("A empresa ja esta cadastrada.")
         else:
-            if resultado['nome'] == nome:
-                print("O novo nome e igual ao antigo.")
-                return
+            
             cursor.execute("INSERT INTO empresas (nome, cnpj, porte, grupos_economicos_id) VALUES (%s, %s, %s, %s)", (nome, cnpj, porte, grupos_economicos_id))
             conn.commit()
             print(f"Empresa {nome} inserida com sucesso.")
@@ -431,4 +429,111 @@ def buscar_operacoes_cidade_empresa_id(codigo_ibge, cnpj):
                 print(f"Nao foi encontrado relacionamento da cidade com codigo ibge {codigo_ibge} com a empresa com cnpj {cnpj}")
     except Exception as e:
         print(f"Erro ao buscar operacao: {e}") 
+
+def imprimir_cidades_velocidade(resultado):
+    print(f"ID: {resultado['id']}, Cidade: {buscar_nome_cidade(resultado['cidades_codigo_ibge']) if buscar_nome_cidade(resultado['cidades_codigo_ibge']) is not None else "Deconhecida"}, Velocidade: {resultado['velocidade']}")
+
+def imprimir_empresas_velocidade(resultado):
+    print(f"ID: {resultado['id']}, Empresa: {buscar_nome_empresa(resultado['empresas_cnpj']) if buscar_nome_empresa(resultado['empresas_cnpj']) is not None else "Desconhecida"}, Velocidade: {resultado['velocidade']}")
+
+
+def velocidade_maior_50_cidade(codigo_ibge):
+    try:
+        query = "SELECT * FROM velocidade_maior_50 WHERE cidades_codigo_ibge = %s;"
+        cursor.execute(query, (codigo_ibge,))
+        resultados = cursor.fetchall()
+        if resultados:
+            print(f"Resultados para cidade {buscar_nome_cidade(codigo_ibge)} (velocidade > 100):")
+            for resultado in resultados:
+                imprimir_empresas_velocidade(resultado)
+        else:
+            print(f"Nenhum resultado encontrado para cidade {buscar_nome_cidade(codigo_ibge) if buscar_nome_cidade(codigo_ibge) is not None else "Desconhecida"} com velocidade maior que 100.")
+    except Exception as e:
+        print(f"Erro ao buscar operacao: {e}") 
+
+def velocidade_menor_50_cidade(codigo_ibge):
+    try:
+        query = " SELECT * FROM velocidade_menor_50 WHERE cidades_codigo_ibge = %s"
+        cursor.execute(query, (codigo_ibge,))
+        resultados = cursor.fetchall()
+        if resultados:
+            print(f"Resultados para cidade {buscar_nome_cidade(codigo_ibge)} (velocidade < 100):")
+            for resultado in resultados:
+                imprimir_empresas_velocidade(resultado)
+        else:
+            print(f"Nenhum resultado encontrado para cidade {buscar_nome_cidade(codigo_ibge) if buscar_nome_cidade(codigo_ibge) is not None else "Desconhecida"} com velocidade menor que 100.")
+    except Exception as e:
+        print(f"Erro ao buscar operacao: {e}") 
+
+def velocidade_maior_50_empresa(empresas_cnpj):
+    try:
+        query = "SELECT * FROM velocidade_maior_50 WHERE empresas_cnpj = %s"
+        cursor.execute(query, (empresas_cnpj,))
+        resultados = cursor.fetchall()
+        if resultados:
+            print(f"Resultados para empresa {buscar_nome_empresa(empresas_cnpj)} (velocidade < 100):")
+            for resultado in resultados:
+                imprimir_cidades_velocidade(resultado)
+        else:
+            print(f"Nenhum resultado encontrado para empresa {buscar_nome_empresa(empresas_cnpj) if buscar_nome_empresa(empresas_cnpj) is not None else "Deconhecida"} com velocidade maior que 100.")
+    except Exception as e:
+        print(f"Erro ao buscar operacao: {e}") 
+
+
+def velocidade_menor_50_empresa(empresas_cnpj):
+    try:
+        query = "SELECT * FROM velocidade_menor_50 WHERE empresas_cnpj = %s"
+        cursor.execute(query, (empresas_cnpj,))
+        resultados = cursor.fetchall()
+        if resultados:
+            print(f"Resultados para empresa {buscar_nome_empresa(empresas_cnpj)} (velocidade < 100):")
+            for resultado in resultados:
+                imprimir_cidades_velocidade(resultado)
+        else:
+            print(f"Nenhum resultado encontrado para empresa {buscar_nome_empresa(empresas_cnpj) if buscar_nome_empresa(empresas_cnpj) is not None else "Desconhecida"} com velocidade menor que 100.")
+    except Exception as e:
+        print(f"Erro ao buscar operacao: {e}") 
+
+
+def criar_banco_de_dados():
+    try:
+        # Configurações de conexão
+        config = {
+            'user': 'root',
+            'password': 'kise',
+            'host': 'localhost',
+        }
+
+        # Conecta ao servidor MySQL
+        connection = mysql.connector.connect(**config)
+        cursor = connection.cursor()
+
+        # Lê o script SQL do arquivo
+        try:
+            # Colocar o link absoluto do arquivo SQL
+            arquivo_sql = r'C:\\Users\\SAMSUNG\\Documents\\meus-projetos\\algoritmos-python\\banco-de-dados\\programa\\database.sql'
+
+            with open(arquivo_sql, 'r') as file:
+                sql_script = file.read()
+        except FileNotFoundError:
+            print("Erro: O arquivo 'database.sql' não foi encontrado.")
+            return
+
+        # Executa o script completo
+        for statement in sql_script.split(';'):
+            if statement.strip():
+                cursor.execute(statement)
+
+        connection.commit()
+        print("Script SQL executado com sucesso.")
+
+    except mysql.connector.Error as err:
+        print(f"Erro ao executar o script no MySQL: {err}")
+    
+    finally:
+        # Fechar a conexão e o cursor
+        if connection.is_connected():
+            cursor.close()
+            connection.close()
+            print("Conexão com o banco de dados encerrada.")
 

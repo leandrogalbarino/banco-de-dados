@@ -28,5 +28,9 @@ def pedir_cnpj(frase):
         else:
             print("CNPJ inválido. Por favor, insira um CNPJ válido com 14 dígitos.")
 def pedir_nome(frase):
-    nome = input(frase)
+    nome = input(frase).capitalize()
+    return nome
+
+def pedir_string(frase):
+    nome = input(frase).capitalize()
     return nome
